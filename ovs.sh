@@ -86,7 +86,6 @@ systemctl restart openvswitch.service
 ## create open v switch bridge and add eth0 interface to the virtual bridge
 echo "Add the eth0 physical interface to the br-ex bridge in openVswitch"
 ovs-vsctl add-br br-ex
-ovs-vsctl add-port br-ex eth0
 
 # Add br-ex interface to firewalld and rtestart firewalld
 firewall-cmd --permanent --zone=public --add-interface=br-ex
@@ -95,8 +94,8 @@ firewall-cmd --reload
 firewall-cmd --list-all
 systemctl restart firewalld.service
 
-# Restart network
-systemctl restart wicked.service
+# Add the eth0 to br-ex and restart network
+ovs-vsctl add-port br-ex eth0 && systemctl restart wicked.service
 
 echo "List available OVS bridges"
 ovs-vsctl show
